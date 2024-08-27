@@ -1,0 +1,8 @@
+done:
+-Perfect Canny Detection done.
+-Created a code in temp3.py to detect shape only if current x and y not present in coordinates.json file (FAILED)
+
+issue:
+-Wrong detection on first frame
+-Repetitive counting of shapes
+-Differentiate between hotspot and object detection circle
