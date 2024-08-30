@@ -1,4 +1,5 @@
 #This will be the final code, right now it contains the code from GoodCanny which has perfect Canny detection but not consistent shapes.
+#Right now I am trying to count shapes when it crosses a fixed line.
 import cv2
 import math
 
@@ -6,8 +7,29 @@ contours = {}
 approx = []
 scale = 2
 
+def count_shape(frame):
+  shape=[{'TRIANGLE': 0, 'SQUARE': 0, 'CIRCLE': 0}]
+  height, width, channels = frame.shape
+  line_position = height-50  # Y-coordinate for a horizontal line
+  offset = 30  # Offset to prevent double counting
+
+  # Initialize count
+  crossing_count = 0
+
+  # Create a list to store the center positions of detected objects
+  object_centers = []
+
+  cv2.line(frame, (0, line_position), (frame.shape[1], line_position), (0, 255, 0), 2)
+
+  # Display the count on the frame
+  cv2.putText(frame, f"Count: {crossing_count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+  # Show the frame
+  cv2.imshow("Object Counter", frame)
+
+
+
 def detect_shape(frame):
-  frame = cv2.GaussianBlur(frame, (3,3), 0) #verify this line.
   gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
   canny = cv2.Canny(frame,80,240,3)
 
