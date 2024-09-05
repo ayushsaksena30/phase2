@@ -27,15 +27,13 @@ def detect_shape(frame):
     colour = (0, 0, 0)
     font = cv2.FONT_HERSHEY_DUPLEX
 
-    if(len(approx) == 3):
-      cv2.putText(frame,'TRIANGLE', coords, font, 1, colour, 4)
-    elif(len(approx)==4):
-      cv2.putText(frame,'SQUARE', coords, font, 1, colour, 4)
+    if(len(approx)==4):
+      cv2.putText(frame,'SQUARE', coords, font, 1, colour, 2)
     else:
       area = cv2.contourArea(contours[i])
       radius = w/2
       if(abs(1 - (float(w)/h))<=2 and abs(1-(area/(math.pi*radius*radius)))<=0.2):
-        cv2.putText(frame,'CIRCLE', coords, font, 1, colour, 4)
+        cv2.putText(frame,'CIRCLE', coords, font, 1, colour, 2)
   
   cv2.imshow('frame',frame)
   cv2.imshow('canny',canny)
