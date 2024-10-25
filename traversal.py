@@ -1,4 +1,4 @@
-from DroneTerminal import Drone
+from merge_codes.DroneTerminal import Drone
 from time import sleep
 
 drone = Drone(connection_string='127.0.0.1:14550')

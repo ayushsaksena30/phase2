@@ -15,11 +15,6 @@ from pymavlink import mavutil
 drone = Drone(connection_string='127.0.0.1:14550')
 drone.speed(3)
 altitude = 15
-
-target = False
-target_x=target_y = None
-center_x=center_y = None
-
 gnd_speed = 1
 
 model = YOLO('yolov8n.pt')
@@ -105,7 +100,6 @@ class MinimalSubscriber(Node):
                                        drone.vehicle.location.global_relative_frame.lon + offset_x * 0.0001)
 
 def camera(args=None):
-    def 
     rclpy.init(args=args)
     cam_feedback = MinimalSubscriber()
     rclpy.spin(cam_feedback)
@@ -157,19 +151,6 @@ def traversal():
                 errorx = abs(round((coord[0] - x) * 10**6, 3))
                 errory = abs(round((coord[1] - y) * 10**6, 3))
                 sleep(0.5)
-
-                if target:
-                  distx = target_x-center_x
-                  disty = target_y-center_y
-
-                  if distx < 20:
-                      set_velocity_body(1,0,0)
-                      sleep(0.5)
-                      distx = target_x-center_x
-                  if disty < 20:
-                      set_velocity_body(0,1,0)
-                      sleep(0.5)
-                      distx = target_x-center_x
 
                 if errorx + errory < 12:
                     print("Lock acquired! Sleeping for 5 seconds...")

@@ -2,7 +2,7 @@ import cv2
 from ultralytics import YOLO
 import numpy as np
 import json
-from DroneTerminal import Drone
+from merge_codes.DroneTerminal import Drone
 Drone = Drone()
 connection_string = "127.0.0.1:14550"
 # Load the YOLO model

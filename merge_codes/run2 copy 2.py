@@ -5,7 +5,7 @@ from sensor_msgs.msg import Image
 import cv2
 from cv_bridge import CvBridge
 from ultralytics import YOLO
-from merge_codes.DroneTerminal import Drone
+from DroneTerminal import Drone
 from time import sleep
 import threading
 from datetime import datetime
@@ -15,16 +15,13 @@ from pymavlink import mavutil
 drone = Drone(connection_string='127.0.0.1:14550')
 drone.speed(3)
 altitude = 15
-
-target = False
-target_x=target_y = None
-center_x=center_y = None
-
 gnd_speed = 1
 
-model = YOLO('yolov8n.pt')
+model = YOLO('yolov8s.pt')
 model.fuse()
 hotspot=0
+target_x=0
+target_y=0
 
 class MinimalSubscriber(Node):
     def __init__(self):
@@ -38,6 +35,8 @@ class MinimalSubscriber(Node):
     def captured_frame_callback(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         global hotspot
+        global target_x
+        global target_y
         results = model(frame)
         annotated_frame = results[0].plot()
         height, width, _ = annotated_frame.shape
@@ -57,6 +56,8 @@ class MinimalSubscriber(Node):
             cls = result.cls[0]  # Class ID
             if(cls!=29):
                 continue
+            target_x=center_x-center_frame_x
+            target_y=center_y-center_frame_y
             # # Draw bounding box on the image
             label = f'Class: {int(cls)}'
             cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
@@ -105,7 +106,6 @@ class MinimalSubscriber(Node):
                                        drone.vehicle.location.global_relative_frame.lon + offset_x * 0.0001)
 
 def camera(args=None):
-    def 
     rclpy.init(args=args)
     cam_feedback = MinimalSubscriber()
     rclpy.spin(cam_feedback)
@@ -140,6 +140,8 @@ def set_velocity_body(vx, vy, vz):
 def traversal():
     drone.arm_and_takeoff(altitude)
     sleep(1)
+    global target_x
+    global target_y
     
     if drone.vehicle.parameters['WP_YAW_BEHAVIOR'] != 1:
         drone.vehicle.parameters['WP_YAW_BEHAVIOR'] = 1
@@ -158,18 +160,13 @@ def traversal():
                 errory = abs(round((coord[1] - y) * 10**6, 3))
                 sleep(0.5)
 
-                if target:
-                  distx = target_x-center_x
-                  disty = target_y-center_y
+                if target_x < 20:
+                    set_velocity_body(1,0,0)
+                    sleep(0.5)
 
-                  if distx < 20:
-                      set_velocity_body(1,0,0)
-                      sleep(0.5)
-                      distx = target_x-center_x
-                  if disty < 20:
-                      set_velocity_body(0,1,0)
-                      sleep(0.5)
-                      distx = target_x-center_x
+                if target_y < 20:
+                    set_velocity_body(0,1,0)
+                    sleep(0.5)
 
                 if errorx + errory < 12:
                     print("Lock acquired! Sleeping for 5 seconds...")

@@ -5,7 +5,7 @@ from sensor_msgs.msg import Image
 import cv2
 from cv_bridge import CvBridge
 from ultralytics import YOLO
-from DroneTerminal import Drone
+from merge_codes.DroneTerminal import Drone
 from time import sleep
 import threading
 from dronekit import connect, VehicleMode, Vehicle, LocationGlobalRelative

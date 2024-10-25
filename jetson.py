@@ -1,5 +1,5 @@
 from ultralytics import YOLO
-from DroneTerminal import Drone
+from merge_codes.DroneTerminal import Drone
 from time import sleep
 import threading
 from datetime import datetime

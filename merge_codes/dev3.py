@@ -7,7 +7,7 @@ from cv_bridge import CvBridge
 import math
 import cv2
 from ultralytics import YOLO
-from DroneTerminal import Drone
+from merge_codes.DroneTerminal import Drone
 import json
 from time import sleep
 drone = Drone(connection_string='127.0.0.1:14550')

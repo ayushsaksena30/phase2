@@ -2,7 +2,7 @@
 #Drone has to do its traversal without going to the hotspot.
 #once a shape is detected, we use __ to calculate its coords and then convert it into our cartasian system
 
-from DroneTerminal import Drone
+from merge_codes.DroneTerminal import Drone
 import rclpy
 from siddharth import calculate_distance
 from time import sleep
