@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-Coordinate Mapper</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="map" width="500" height="300"></canvas>
+    <p id="real-coordinates"></p>
+
+    <script>
+        const canvas = document.getElementById('map');
+        const ctx = canvas.getContext('2d');
+        const realCoordinatesText = document.getElementById('real-coordinates');
+
+        // Define real-world coordinates for the corners
+        const realCoords = {
+            topLeft: {lat: -35.3624351, lon: 149.1660800},  // (0, y) in the rectangle
+            topRight: {lat: -35.3629526, lon: 149.1660929}, // (x, y) in the rectangle
+            bottomLeft: {lat: -35.3624384, lon: 149.1649893}, // (0, 0) in the rectangle
+            bottomRight: {lat: -35.3629377, lon: 149.1649677} // (x, 0) in the rectangle
+        };
+
+        // Draw the rectangle
+        ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.stroke();
+
+        // Bilinear interpolation to map click on rectangle to real-world coordinates
+        function mapClickToRealCoordinates(x, y) {
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Normalize the click coordinates (x, y) within the canvas
+            const normX = x / width;
+            const normY = y / height;
+
+            // Apply bilinear interpolation formula
+            const realLon = (1 - normX) * (1 - normY) * realCoords.bottomLeft.lon
+                          + normX * (1 - normY) * realCoords.bottomRight.lon
+                          + (1 - normX) * normY * realCoords.topLeft.lon
+                          + normX * normY * realCoords.topRight.lon;
+
+            const realLat = (1 - normX) * (1 - normY) * realCoords.bottomLeft.lat
+                          + normX * (1 - normY) * realCoords.bottomRight.lat
+                          + (1 - normX) * normY * realCoords.topLeft.lat
+                          + normX * normY * realCoords.topRight.lat;
+
+            return {lat: realLat, lon: realLon};
+        }
+
+        // Handle click event
+        canvas.addEventListener('click', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const realCoordsClicked = mapClickToRealCoordinates(x, y);
+            realCoordinatesText.innerText = `Real Coordinates: Latitude: ${realCoordsClicked.lat}, Longitude: ${realCoordsClicked.lon}`;
+        });
+    </script>
+</body>
+</html>
