@@ -150,5 +150,5 @@ t2.join()
 # half circle issue still unresolved
 
 #Issues I saw-
-# While shape detection, we can't give centers of triangles and squares seperating, 
+# While shape detection, we can't give centers of triangles and squares seperately, 
 # it'll be struck there infinitely
